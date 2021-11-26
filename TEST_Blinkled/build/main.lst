@@ -1,0 +1,1597 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"main.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.MX_GPIO_Init,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	MX_GPIO_Init:
+  26              	.LFB137:
+  27              		.file 1 "Core/Src/main.c"
+   1:Core/Src/main.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/main.c **** /* USER CODE END Header */
+   3:Core/Src/main.c **** /* Includes ------------------------------------------------------------------*/
+   4:Core/Src/main.c **** #include "main.h"
+   5:Core/Src/main.c **** #include "cmsis_os.h"
+   6:Core/Src/main.c **** 
+   7:Core/Src/main.c **** /* Private includes ----------------------------------------------------------*/
+   8:Core/Src/main.c **** /* USER CODE BEGIN Includes */
+   9:Core/Src/main.c **** /* USER CODE END Includes */
+  10:Core/Src/main.c **** 
+  11:Core/Src/main.c **** /* Private typedef -----------------------------------------------------------*/
+  12:Core/Src/main.c **** /* USER CODE BEGIN PTD */
+  13:Core/Src/main.c **** /* USER CODE END PTD */
+  14:Core/Src/main.c **** 
+  15:Core/Src/main.c **** /* Private define ------------------------------------------------------------*/
+  16:Core/Src/main.c **** /* USER CODE BEGIN PD */
+  17:Core/Src/main.c **** /* USER CODE END PD */
+  18:Core/Src/main.c **** 
+  19:Core/Src/main.c **** /* Private macro -------------------------------------------------------------*/
+  20:Core/Src/main.c **** /* USER CODE BEGIN PM */
+  21:Core/Src/main.c **** /* USER CODE END PM */
+  22:Core/Src/main.c **** 
+  23:Core/Src/main.c **** /* Private variables ---------------------------------------------------------*/
+  24:Core/Src/main.c **** TIM_HandleTypeDef htim3;
+  25:Core/Src/main.c **** 
+  26:Core/Src/main.c **** /* Definitions for Task01 */
+  27:Core/Src/main.c **** osThreadId_t Task01Handle;
+  28:Core/Src/main.c **** const osThreadAttr_t Task01_attributes = {
+  29:Core/Src/main.c ****   .name = "Task01",
+  30:Core/Src/main.c ****   .priority = (osPriority_t) osPriorityNormal,
+  31:Core/Src/main.c ****   .stack_size = 128 * 4
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 2
+
+
+  32:Core/Src/main.c **** };
+  33:Core/Src/main.c **** /* Definitions for myTimer01 */
+  34:Core/Src/main.c **** osTimerId_t myTimer01Handle;
+  35:Core/Src/main.c **** const osTimerAttr_t myTimer01_attributes = {
+  36:Core/Src/main.c ****   .name = "myTimer01"
+  37:Core/Src/main.c **** };
+  38:Core/Src/main.c **** /* USER CODE BEGIN PV */
+  39:Core/Src/main.c **** 
+  40:Core/Src/main.c ****   GPIO_t myLED_InitStruct;
+  41:Core/Src/main.c **** 
+  42:Core/Src/main.c **** 
+  43:Core/Src/main.c **** /* USER CODE END PV */
+  44:Core/Src/main.c **** 
+  45:Core/Src/main.c **** /* Private function prototypes -----------------------------------------------*/
+  46:Core/Src/main.c **** void SystemClock_Config(void);
+  47:Core/Src/main.c **** static void MX_GPIO_Init(void);
+  48:Core/Src/main.c **** static void MX_TIM3_Init(void);
+  49:Core/Src/main.c **** void StartTask01(void *argument);
+  50:Core/Src/main.c **** void myTimerCallback01(GPIO_t *argument);
+  51:Core/Src/main.c **** 
+  52:Core/Src/main.c **** /* USER CODE BEGIN PFP */
+  53:Core/Src/main.c **** void blink1(GPIO_t* GPIO, int activeTime, int Period);
+  54:Core/Src/main.c **** void blink2(GPIO_t* GPIO, int activeTime, int Period);
+  55:Core/Src/main.c **** /* USER CODE END PFP */
+  56:Core/Src/main.c **** 
+  57:Core/Src/main.c **** /* Private user code ---------------------------------------------------------*/
+  58:Core/Src/main.c **** /* USER CODE BEGIN 0 */
+  59:Core/Src/main.c **** /* USER CODE END 0 */
+  60:Core/Src/main.c **** 
+  61:Core/Src/main.c **** /**
+  62:Core/Src/main.c ****   * @brief  The application entry point.
+  63:Core/Src/main.c ****   * @retval int
+  64:Core/Src/main.c ****   */
+  65:Core/Src/main.c **** int main(void)
+  66:Core/Src/main.c **** {
+  67:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
+  68:Core/Src/main.c ****   /* USER CODE END 1 */
+  69:Core/Src/main.c **** 
+  70:Core/Src/main.c ****   /* MCU Configuration--------------------------------------------------------*/
+  71:Core/Src/main.c **** 
+  72:Core/Src/main.c ****   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  73:Core/Src/main.c ****   HAL_Init();
+  74:Core/Src/main.c **** 
+  75:Core/Src/main.c ****   /* USER CODE BEGIN Init */
+  76:Core/Src/main.c ****   /* USER CODE END Init */
+  77:Core/Src/main.c **** 
+  78:Core/Src/main.c ****   /* Configure the system clock */
+  79:Core/Src/main.c ****   SystemClock_Config();
+  80:Core/Src/main.c **** 
+  81:Core/Src/main.c ****   /* USER CODE BEGIN SysInit */
+  82:Core/Src/main.c ****   /* USER CODE END SysInit */
+  83:Core/Src/main.c **** 
+  84:Core/Src/main.c ****   /* Initialize all configured peripherals */
+  85:Core/Src/main.c ****   MX_GPIO_Init();
+  86:Core/Src/main.c ****   MX_TIM3_Init();
+  87:Core/Src/main.c **** 
+  88:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 3
+
+
+  89:Core/Src/main.c **** 
+  90:Core/Src/main.c ****   GPIO_t* myLED1 = &myLED_InitStruct;
+  91:Core/Src/main.c ****   
+  92:Core/Src/main.c ****   myLED1->GPIO_port = GPIOD;
+  93:Core/Src/main.c ****   myLED1->GPIO_pin = GPIO_PIN_13;
+  94:Core/Src/main.c **** 
+  95:Core/Src/main.c ****   blink1(myLED1, 3000, 4000);
+  96:Core/Src/main.c **** 
+  97:Core/Src/main.c ****   /* USER CODE END 2 */
+  98:Core/Src/main.c **** 
+  99:Core/Src/main.c ****   /* Init scheduler */
+ 100:Core/Src/main.c ****   osKernelInitialize();
+ 101:Core/Src/main.c **** 
+ 102:Core/Src/main.c ****   /* USER CODE BEGIN RTOS_MUTEX */
+ 103:Core/Src/main.c ****   /* USER CODE END RTOS_MUTEX */
+ 104:Core/Src/main.c **** 
+ 105:Core/Src/main.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+ 106:Core/Src/main.c ****   /* USER CODE END RTOS_SEMAPHORES */
+ 107:Core/Src/main.c **** 
+ 108:Core/Src/main.c ****   /* Create the timer(s) */
+ 109:Core/Src/main.c ****   /* creation of myTimer01 */
+ 110:Core/Src/main.c ****   
+ 111:Core/Src/main.c **** 
+ 112:Core/Src/main.c ****   /* USER CODE BEGIN RTOS_TIMERS */
+ 113:Core/Src/main.c ****   /* USER CODE END RTOS_TIMERS */
+ 114:Core/Src/main.c **** 
+ 115:Core/Src/main.c ****   /* USER CODE BEGIN RTOS_QUEUES */
+ 116:Core/Src/main.c ****   /* USER CODE END RTOS_QUEUES */
+ 117:Core/Src/main.c **** 
+ 118:Core/Src/main.c ****   /* Create the thread(s) */
+ 119:Core/Src/main.c ****   /* creation of Task01 */
+ 120:Core/Src/main.c ****   Task01Handle = osThreadNew(StartTask01, NULL, &Task01_attributes);
+ 121:Core/Src/main.c **** 
+ 122:Core/Src/main.c ****   /* USER CODE BEGIN RTOS_THREADS */
+ 123:Core/Src/main.c ****   /* USER CODE END RTOS_THREADS */
+ 124:Core/Src/main.c **** 
+ 125:Core/Src/main.c ****   /* USER CODE BEGIN RTOS_EVENTS */
+ 126:Core/Src/main.c ****   /* USER CODE END RTOS_EVENTS */
+ 127:Core/Src/main.c **** 
+ 128:Core/Src/main.c ****   /* Start scheduler */
+ 129:Core/Src/main.c ****   osKernelStart();
+ 130:Core/Src/main.c **** 
+ 131:Core/Src/main.c ****   /* We should never get here as control is now taken by the scheduler */
+ 132:Core/Src/main.c ****   /* Infinite loop */
+ 133:Core/Src/main.c ****   /* USER CODE BEGIN WHILE */
+ 134:Core/Src/main.c ****     /* USER CODE END WHILE */
+ 135:Core/Src/main.c **** 
+ 136:Core/Src/main.c ****     /* USER CODE BEGIN 3 */
+ 137:Core/Src/main.c ****   /* USER CODE END 3 */
+ 138:Core/Src/main.c **** }
+ 139:Core/Src/main.c **** 
+ 140:Core/Src/main.c **** /**
+ 141:Core/Src/main.c ****   * @brief System Clock Configuration
+ 142:Core/Src/main.c ****   * @retval None
+ 143:Core/Src/main.c ****   */
+ 144:Core/Src/main.c **** void SystemClock_Config(void)
+ 145:Core/Src/main.c **** {
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 4
+
+
+ 146:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 147:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 148:Core/Src/main.c **** 
+ 149:Core/Src/main.c ****   /** Configure the main internal regulator output voltage
+ 150:Core/Src/main.c ****   */
+ 151:Core/Src/main.c ****   __HAL_RCC_PWR_CLK_ENABLE();
+ 152:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 153:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 154:Core/Src/main.c ****   * in the RCC_OscInitTypeDef structure.
+ 155:Core/Src/main.c ****   */
+ 156:Core/Src/main.c ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+ 157:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 158:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 159:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 160:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 8;
+ 161:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 400;
+ 162:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+ 163:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 4;
+ 164:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 165:Core/Src/main.c ****   {
+ 166:Core/Src/main.c ****     Error_Handler();
+ 167:Core/Src/main.c ****   }
+ 168:Core/Src/main.c ****   /** Initializes the CPU, AHB and APB buses clocks
+ 169:Core/Src/main.c ****   */
+ 170:Core/Src/main.c ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+ 171:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 172:Core/Src/main.c ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 173:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 174:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+ 175:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 176:Core/Src/main.c **** 
+ 177:Core/Src/main.c ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
+ 178:Core/Src/main.c ****   {
+ 179:Core/Src/main.c ****     Error_Handler();
+ 180:Core/Src/main.c ****   }
+ 181:Core/Src/main.c **** }
+ 182:Core/Src/main.c **** 
+ 183:Core/Src/main.c **** /**
+ 184:Core/Src/main.c ****   * @brief TIM3 Initialization Function
+ 185:Core/Src/main.c ****   * @param None
+ 186:Core/Src/main.c ****   * @retval None
+ 187:Core/Src/main.c ****   */
+ 188:Core/Src/main.c **** static void MX_TIM3_Init(void)
+ 189:Core/Src/main.c **** {
+ 190:Core/Src/main.c **** 
+ 191:Core/Src/main.c ****   /* USER CODE BEGIN TIM3_Init 0 */
+ 192:Core/Src/main.c ****   /* USER CODE END TIM3_Init 0 */
+ 193:Core/Src/main.c **** 
+ 194:Core/Src/main.c ****   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+ 195:Core/Src/main.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
+ 196:Core/Src/main.c **** 
+ 197:Core/Src/main.c ****   /* USER CODE BEGIN TIM3_Init 1 */
+ 198:Core/Src/main.c ****   /* USER CODE END TIM3_Init 1 */
+ 199:Core/Src/main.c ****   htim3.Instance = TIM3;
+ 200:Core/Src/main.c ****   htim3.Init.Prescaler = 9999;
+ 201:Core/Src/main.c ****   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+ 202:Core/Src/main.c ****   htim3.Init.Period = 9999;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 5
+
+
+ 203:Core/Src/main.c ****   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+ 204:Core/Src/main.c ****   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+ 205:Core/Src/main.c ****   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+ 206:Core/Src/main.c ****   {
+ 207:Core/Src/main.c ****     Error_Handler();
+ 208:Core/Src/main.c ****   }
+ 209:Core/Src/main.c ****   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+ 210:Core/Src/main.c ****   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+ 211:Core/Src/main.c ****   {
+ 212:Core/Src/main.c ****     Error_Handler();
+ 213:Core/Src/main.c ****   }
+ 214:Core/Src/main.c ****   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+ 215:Core/Src/main.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+ 216:Core/Src/main.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+ 217:Core/Src/main.c ****   {
+ 218:Core/Src/main.c ****     Error_Handler();
+ 219:Core/Src/main.c ****   }
+ 220:Core/Src/main.c ****   /* USER CODE BEGIN TIM3_Init 2 */
+ 221:Core/Src/main.c ****     HAL_TIM_Base_Stop(&htim3);
+ 222:Core/Src/main.c ****     HAL_TIM_Base_Stop_IT(&htim3);
+ 223:Core/Src/main.c ****   /* USER CODE END TIM3_Init 2 */
+ 224:Core/Src/main.c **** 
+ 225:Core/Src/main.c **** }
+ 226:Core/Src/main.c **** 
+ 227:Core/Src/main.c **** /**
+ 228:Core/Src/main.c ****   * @brief GPIO Initialization Function
+ 229:Core/Src/main.c ****   * @param None
+ 230:Core/Src/main.c ****   * @retval None
+ 231:Core/Src/main.c ****   */
+ 232:Core/Src/main.c **** static void MX_GPIO_Init(void)
+ 233:Core/Src/main.c **** {
+  28              		.loc 1 233 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 32
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 30B5     		push	{r4, r5, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 12
+  35              		.cfi_offset 4, -12
+  36              		.cfi_offset 5, -8
+  37              		.cfi_offset 14, -4
+  38 0002 89B0     		sub	sp, sp, #36
+  39              	.LCFI1:
+  40              		.cfi_def_cfa_offset 48
+ 234:Core/Src/main.c ****   GPIO_InitTypeDef GPIO_InitStruct = {0};
+  41              		.loc 1 234 3 view .LVU1
+  42              		.loc 1 234 20 is_stmt 0 view .LVU2
+  43 0004 0024     		movs	r4, #0
+  44 0006 0394     		str	r4, [sp, #12]
+  45 0008 0494     		str	r4, [sp, #16]
+  46 000a 0594     		str	r4, [sp, #20]
+  47 000c 0694     		str	r4, [sp, #24]
+  48 000e 0794     		str	r4, [sp, #28]
+ 235:Core/Src/main.c **** 
+ 236:Core/Src/main.c ****   /* GPIO Ports Clock Enable */
+ 237:Core/Src/main.c ****   __HAL_RCC_GPIOH_CLK_ENABLE();
+  49              		.loc 1 237 3 is_stmt 1 view .LVU3
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 6
+
+
+  50              	.LBB2:
+  51              		.loc 1 237 3 view .LVU4
+  52 0010 0094     		str	r4, [sp]
+  53              		.loc 1 237 3 view .LVU5
+  54 0012 194B     		ldr	r3, .L3
+  55 0014 1A6B     		ldr	r2, [r3, #48]
+  56 0016 42F08002 		orr	r2, r2, #128
+  57 001a 1A63     		str	r2, [r3, #48]
+  58              		.loc 1 237 3 view .LVU6
+  59 001c 1A6B     		ldr	r2, [r3, #48]
+  60 001e 02F08002 		and	r2, r2, #128
+  61 0022 0092     		str	r2, [sp]
+  62              		.loc 1 237 3 view .LVU7
+  63 0024 009A     		ldr	r2, [sp]
+  64              	.LBE2:
+  65              		.loc 1 237 3 view .LVU8
+ 238:Core/Src/main.c ****   __HAL_RCC_GPIOD_CLK_ENABLE();
+  66              		.loc 1 238 3 view .LVU9
+  67              	.LBB3:
+  68              		.loc 1 238 3 view .LVU10
+  69 0026 0194     		str	r4, [sp, #4]
+  70              		.loc 1 238 3 view .LVU11
+  71 0028 1A6B     		ldr	r2, [r3, #48]
+  72 002a 42F00802 		orr	r2, r2, #8
+  73 002e 1A63     		str	r2, [r3, #48]
+  74              		.loc 1 238 3 view .LVU12
+  75 0030 1A6B     		ldr	r2, [r3, #48]
+  76 0032 02F00802 		and	r2, r2, #8
+  77 0036 0192     		str	r2, [sp, #4]
+  78              		.loc 1 238 3 view .LVU13
+  79 0038 019A     		ldr	r2, [sp, #4]
+  80              	.LBE3:
+  81              		.loc 1 238 3 view .LVU14
+ 239:Core/Src/main.c ****   __HAL_RCC_GPIOA_CLK_ENABLE();
+  82              		.loc 1 239 3 view .LVU15
+  83              	.LBB4:
+  84              		.loc 1 239 3 view .LVU16
+  85 003a 0294     		str	r4, [sp, #8]
+  86              		.loc 1 239 3 view .LVU17
+  87 003c 1A6B     		ldr	r2, [r3, #48]
+  88 003e 42F00102 		orr	r2, r2, #1
+  89 0042 1A63     		str	r2, [r3, #48]
+  90              		.loc 1 239 3 view .LVU18
+  91 0044 1B6B     		ldr	r3, [r3, #48]
+  92 0046 03F00103 		and	r3, r3, #1
+  93 004a 0293     		str	r3, [sp, #8]
+  94              		.loc 1 239 3 view .LVU19
+  95 004c 029B     		ldr	r3, [sp, #8]
+  96              	.LBE4:
+  97              		.loc 1 239 3 view .LVU20
+ 240:Core/Src/main.c **** 
+ 241:Core/Src/main.c ****   /*Configure GPIO pin Output Level */
+ 242:Core/Src/main.c ****   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
+  98              		.loc 1 242 3 view .LVU21
+  99 004e 0B4D     		ldr	r5, .L3+4
+ 100 0050 2246     		mov	r2, r4
+ 101 0052 4FF47041 		mov	r1, #61440
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 7
+
+
+ 102 0056 2846     		mov	r0, r5
+ 103 0058 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 104              	.LVL0:
+ 243:Core/Src/main.c **** 
+ 244:Core/Src/main.c ****   /*Configure GPIO pins : PD12 PD13 PD14 PD15 */
+ 245:Core/Src/main.c ****   GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
+ 105              		.loc 1 245 3 view .LVU22
+ 106              		.loc 1 245 23 is_stmt 0 view .LVU23
+ 107 005c 4FF47043 		mov	r3, #61440
+ 108 0060 0393     		str	r3, [sp, #12]
+ 246:Core/Src/main.c ****   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+ 109              		.loc 1 246 3 is_stmt 1 view .LVU24
+ 110              		.loc 1 246 24 is_stmt 0 view .LVU25
+ 111 0062 0123     		movs	r3, #1
+ 112 0064 0493     		str	r3, [sp, #16]
+ 247:Core/Src/main.c ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 113              		.loc 1 247 3 is_stmt 1 view .LVU26
+ 114              		.loc 1 247 24 is_stmt 0 view .LVU27
+ 115 0066 0594     		str	r4, [sp, #20]
+ 248:Core/Src/main.c ****   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 116              		.loc 1 248 3 is_stmt 1 view .LVU28
+ 117              		.loc 1 248 25 is_stmt 0 view .LVU29
+ 118 0068 0223     		movs	r3, #2
+ 119 006a 0693     		str	r3, [sp, #24]
+ 249:Core/Src/main.c ****   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+ 120              		.loc 1 249 3 is_stmt 1 view .LVU30
+ 121 006c 03A9     		add	r1, sp, #12
+ 122 006e 2846     		mov	r0, r5
+ 123 0070 FFF7FEFF 		bl	HAL_GPIO_Init
+ 124              	.LVL1:
+ 250:Core/Src/main.c **** 
+ 251:Core/Src/main.c **** }
+ 125              		.loc 1 251 1 is_stmt 0 view .LVU31
+ 126 0074 09B0     		add	sp, sp, #36
+ 127              	.LCFI2:
+ 128              		.cfi_def_cfa_offset 12
+ 129              		@ sp needed
+ 130 0076 30BD     		pop	{r4, r5, pc}
+ 131              	.L4:
+ 132              		.align	2
+ 133              	.L3:
+ 134 0078 00380240 		.word	1073887232
+ 135 007c 000C0240 		.word	1073875968
+ 136              		.cfi_endproc
+ 137              	.LFE137:
+ 139              		.section	.text.MX_TIM3_Init,"ax",%progbits
+ 140              		.align	1
+ 141              		.syntax unified
+ 142              		.thumb
+ 143              		.thumb_func
+ 144              		.fpu fpv4-sp-d16
+ 146              	MX_TIM3_Init:
+ 147              	.LFB136:
+ 189:Core/Src/main.c **** 
+ 148              		.loc 1 189 1 is_stmt 1 view -0
+ 149              		.cfi_startproc
+ 150              		@ args = 0, pretend = 0, frame = 24
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 8
+
+
+ 151              		@ frame_needed = 0, uses_anonymous_args = 0
+ 152 0000 30B5     		push	{r4, r5, lr}
+ 153              	.LCFI3:
+ 154              		.cfi_def_cfa_offset 12
+ 155              		.cfi_offset 4, -12
+ 156              		.cfi_offset 5, -8
+ 157              		.cfi_offset 14, -4
+ 158 0002 87B0     		sub	sp, sp, #28
+ 159              	.LCFI4:
+ 160              		.cfi_def_cfa_offset 40
+ 194:Core/Src/main.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
+ 161              		.loc 1 194 3 view .LVU33
+ 194:Core/Src/main.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
+ 162              		.loc 1 194 26 is_stmt 0 view .LVU34
+ 163 0004 0025     		movs	r5, #0
+ 164 0006 0295     		str	r5, [sp, #8]
+ 165 0008 0395     		str	r5, [sp, #12]
+ 166 000a 0495     		str	r5, [sp, #16]
+ 167 000c 0595     		str	r5, [sp, #20]
+ 195:Core/Src/main.c **** 
+ 168              		.loc 1 195 3 is_stmt 1 view .LVU35
+ 195:Core/Src/main.c **** 
+ 169              		.loc 1 195 27 is_stmt 0 view .LVU36
+ 170 000e 0095     		str	r5, [sp]
+ 171 0010 0195     		str	r5, [sp, #4]
+ 199:Core/Src/main.c ****   htim3.Init.Prescaler = 9999;
+ 172              		.loc 1 199 3 is_stmt 1 view .LVU37
+ 199:Core/Src/main.c ****   htim3.Init.Prescaler = 9999;
+ 173              		.loc 1 199 18 is_stmt 0 view .LVU38
+ 174 0012 114C     		ldr	r4, .L7
+ 175 0014 114B     		ldr	r3, .L7+4
+ 176 0016 2360     		str	r3, [r4]
+ 200:Core/Src/main.c ****   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+ 177              		.loc 1 200 3 is_stmt 1 view .LVU39
+ 200:Core/Src/main.c ****   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+ 178              		.loc 1 200 24 is_stmt 0 view .LVU40
+ 179 0018 42F20F73 		movw	r3, #9999
+ 180 001c 6360     		str	r3, [r4, #4]
+ 201:Core/Src/main.c ****   htim3.Init.Period = 9999;
+ 181              		.loc 1 201 3 is_stmt 1 view .LVU41
+ 201:Core/Src/main.c ****   htim3.Init.Period = 9999;
+ 182              		.loc 1 201 26 is_stmt 0 view .LVU42
+ 183 001e A560     		str	r5, [r4, #8]
+ 202:Core/Src/main.c ****   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+ 184              		.loc 1 202 3 is_stmt 1 view .LVU43
+ 202:Core/Src/main.c ****   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+ 185              		.loc 1 202 21 is_stmt 0 view .LVU44
+ 186 0020 E360     		str	r3, [r4, #12]
+ 203:Core/Src/main.c ****   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+ 187              		.loc 1 203 3 is_stmt 1 view .LVU45
+ 203:Core/Src/main.c ****   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+ 188              		.loc 1 203 28 is_stmt 0 view .LVU46
+ 189 0022 2561     		str	r5, [r4, #16]
+ 204:Core/Src/main.c ****   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+ 190              		.loc 1 204 3 is_stmt 1 view .LVU47
+ 204:Core/Src/main.c ****   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+ 191              		.loc 1 204 32 is_stmt 0 view .LVU48
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 9
+
+
+ 192 0024 A561     		str	r5, [r4, #24]
+ 205:Core/Src/main.c ****   {
+ 193              		.loc 1 205 3 is_stmt 1 view .LVU49
+ 205:Core/Src/main.c ****   {
+ 194              		.loc 1 205 7 is_stmt 0 view .LVU50
+ 195 0026 2046     		mov	r0, r4
+ 196 0028 FFF7FEFF 		bl	HAL_TIM_Base_Init
+ 197              	.LVL2:
+ 209:Core/Src/main.c ****   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+ 198              		.loc 1 209 3 is_stmt 1 view .LVU51
+ 209:Core/Src/main.c ****   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+ 199              		.loc 1 209 34 is_stmt 0 view .LVU52
+ 200 002c 4FF48053 		mov	r3, #4096
+ 201 0030 0293     		str	r3, [sp, #8]
+ 210:Core/Src/main.c ****   {
+ 202              		.loc 1 210 3 is_stmt 1 view .LVU53
+ 210:Core/Src/main.c ****   {
+ 203              		.loc 1 210 7 is_stmt 0 view .LVU54
+ 204 0032 02A9     		add	r1, sp, #8
+ 205 0034 2046     		mov	r0, r4
+ 206 0036 FFF7FEFF 		bl	HAL_TIM_ConfigClockSource
+ 207              	.LVL3:
+ 214:Core/Src/main.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+ 208              		.loc 1 214 3 is_stmt 1 view .LVU55
+ 214:Core/Src/main.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+ 209              		.loc 1 214 37 is_stmt 0 view .LVU56
+ 210 003a 0095     		str	r5, [sp]
+ 215:Core/Src/main.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+ 211              		.loc 1 215 3 is_stmt 1 view .LVU57
+ 215:Core/Src/main.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+ 212              		.loc 1 215 33 is_stmt 0 view .LVU58
+ 213 003c 0195     		str	r5, [sp, #4]
+ 216:Core/Src/main.c ****   {
+ 214              		.loc 1 216 3 is_stmt 1 view .LVU59
+ 216:Core/Src/main.c ****   {
+ 215              		.loc 1 216 7 is_stmt 0 view .LVU60
+ 216 003e 6946     		mov	r1, sp
+ 217 0040 2046     		mov	r0, r4
+ 218 0042 FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+ 219              	.LVL4:
+ 221:Core/Src/main.c ****     HAL_TIM_Base_Stop_IT(&htim3);
+ 220              		.loc 1 221 5 is_stmt 1 view .LVU61
+ 221 0046 2046     		mov	r0, r4
+ 222 0048 FFF7FEFF 		bl	HAL_TIM_Base_Stop
+ 223              	.LVL5:
+ 222:Core/Src/main.c ****   /* USER CODE END TIM3_Init 2 */
+ 224              		.loc 1 222 5 view .LVU62
+ 225 004c 2046     		mov	r0, r4
+ 226 004e FFF7FEFF 		bl	HAL_TIM_Base_Stop_IT
+ 227              	.LVL6:
+ 225:Core/Src/main.c **** 
+ 228              		.loc 1 225 1 is_stmt 0 view .LVU63
+ 229 0052 07B0     		add	sp, sp, #28
+ 230              	.LCFI5:
+ 231              		.cfi_def_cfa_offset 12
+ 232              		@ sp needed
+ 233 0054 30BD     		pop	{r4, r5, pc}
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 10
+
+
+ 234              	.L8:
+ 235 0056 00BF     		.align	2
+ 236              	.L7:
+ 237 0058 00000000 		.word	.LANCHOR0
+ 238 005c 00040040 		.word	1073742848
+ 239              		.cfi_endproc
+ 240              	.LFE136:
+ 242              		.section	.text.myTimerCallback01,"ax",%progbits
+ 243              		.align	1
+ 244              		.global	myTimerCallback01
+ 245              		.syntax unified
+ 246              		.thumb
+ 247              		.thumb_func
+ 248              		.fpu fpv4-sp-d16
+ 250              	myTimerCallback01:
+ 251              	.LVL7:
+ 252              	.LFB141:
+ 252:Core/Src/main.c **** 
+ 253:Core/Src/main.c **** /* USER CODE BEGIN 4 */
+ 254:Core/Src/main.c **** 
+ 255:Core/Src/main.c **** void blink1(GPIO_t* GPIO, int activeTime, int Period)
+ 256:Core/Src/main.c **** {
+ 257:Core/Src/main.c ****   GPIO->LED_ActiveTime = activeTime * 10;
+ 258:Core/Src/main.c ****   GPIO->LED_Period = Period * 10;
+ 259:Core/Src/main.c **** 
+ 260:Core/Src/main.c ****   HAL_GPIO_WritePin(GPIO->GPIO_port, GPIO->GPIO_pin, 1);
+ 261:Core/Src/main.c ****   htim3.Instance->ARR = GPIO->LED_ActiveTime;
+ 262:Core/Src/main.c ****   htim3.Instance->SR &= ~(1UL << 0);    //clear Interrupt flag
+ 263:Core/Src/main.c ****   HAL_TIM_Base_Start(&htim3);
+ 264:Core/Src/main.c ****   HAL_TIM_Base_Start_IT(&htim3);
+ 265:Core/Src/main.c **** }
+ 266:Core/Src/main.c **** 
+ 267:Core/Src/main.c **** void blink2(GPIO_t* GPIO, int activeTime, int Period)
+ 268:Core/Src/main.c **** {
+ 269:Core/Src/main.c ****   GPIO->LED_ActiveTime = activeTime;
+ 270:Core/Src/main.c ****   GPIO->LED_Period = Period;
+ 271:Core/Src/main.c **** 
+ 272:Core/Src/main.c ****   myTimer01Handle = osTimerNew(myTimerCallback01, osTimerPeriodic, GPIO, &myTimer01_attributes);
+ 273:Core/Src/main.c **** 
+ 274:Core/Src/main.c ****   HAL_GPIO_WritePin(GPIO->GPIO_port, GPIO->GPIO_pin, 1);
+ 275:Core/Src/main.c ****   osTimerStart(myTimer01Handle, activeTime);
+ 276:Core/Src/main.c **** 
+ 277:Core/Src/main.c **** }
+ 278:Core/Src/main.c **** 
+ 279:Core/Src/main.c **** 
+ 280:Core/Src/main.c **** /* USER CODE END 4 */
+ 281:Core/Src/main.c **** 
+ 282:Core/Src/main.c **** /* USER CODE BEGIN Header_StartTask01 */
+ 283:Core/Src/main.c **** /* USER CODE END Header_StartTask01 */
+ 284:Core/Src/main.c **** void StartTask01(void *argument)
+ 285:Core/Src/main.c **** {
+ 286:Core/Src/main.c ****   /* USER CODE BEGIN 5 */
+ 287:Core/Src/main.c ****   GPIO_t myLED2;
+ 288:Core/Src/main.c **** 
+ 289:Core/Src/main.c ****   myLED2.GPIO_port = GPIOD;
+ 290:Core/Src/main.c ****   myLED2.GPIO_pin = GPIO_PIN_15;
+ 291:Core/Src/main.c **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 11
+
+
+ 292:Core/Src/main.c ****   blink2(&myLED2, 1000, 4000);
+ 293:Core/Src/main.c **** 
+ 294:Core/Src/main.c ****   while(1)
+ 295:Core/Src/main.c ****   {
+ 296:Core/Src/main.c ****     osDelay(1);
+ 297:Core/Src/main.c ****   }
+ 298:Core/Src/main.c **** 
+ 299:Core/Src/main.c ****   /* USER CODE END 5 */
+ 300:Core/Src/main.c **** }
+ 301:Core/Src/main.c **** 
+ 302:Core/Src/main.c **** /* myTimerCallback01 function */
+ 303:Core/Src/main.c **** void myTimerCallback01(GPIO_t *argument)
+ 304:Core/Src/main.c **** {
+ 253              		.loc 1 304 1 is_stmt 1 view -0
+ 254              		.cfi_startproc
+ 255              		@ args = 0, pretend = 0, frame = 0
+ 256              		@ frame_needed = 0, uses_anonymous_args = 0
+ 257              		.loc 1 304 1 is_stmt 0 view .LVU65
+ 258 0000 10B5     		push	{r4, lr}
+ 259              	.LCFI6:
+ 260              		.cfi_def_cfa_offset 8
+ 261              		.cfi_offset 4, -8
+ 262              		.cfi_offset 14, -4
+ 263 0002 0446     		mov	r4, r0
+ 305:Core/Src/main.c ****   /* USER CODE BEGIN myTimerCallback01 */
+ 306:Core/Src/main.c ****   osTimerStop(myTimer01Handle);
+ 264              		.loc 1 306 3 is_stmt 1 view .LVU66
+ 265 0004 0D4B     		ldr	r3, .L13
+ 266 0006 1868     		ldr	r0, [r3]
+ 267              	.LVL8:
+ 268              		.loc 1 306 3 is_stmt 0 view .LVU67
+ 269 0008 FFF7FEFF 		bl	osTimerStop
+ 270              	.LVL9:
+ 307:Core/Src/main.c ****   GPIO_t* LED_Data = argument;
+ 271              		.loc 1 307 3 is_stmt 1 view .LVU68
+ 308:Core/Src/main.c ****   HAL_GPIO_TogglePin(LED_Data->GPIO_port, LED_Data->GPIO_pin);
+ 272              		.loc 1 308 3 view .LVU69
+ 273 000c A188     		ldrh	r1, [r4, #4]
+ 274 000e 2068     		ldr	r0, [r4]
+ 275 0010 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 276              	.LVL10:
+ 309:Core/Src/main.c ****   if(HAL_GPIO_ReadPin(LED_Data->GPIO_port, LED_Data->GPIO_pin) == GPIO_PIN_RESET)
+ 277              		.loc 1 309 3 view .LVU70
+ 278              		.loc 1 309 6 is_stmt 0 view .LVU71
+ 279 0014 A188     		ldrh	r1, [r4, #4]
+ 280 0016 2068     		ldr	r0, [r4]
+ 281 0018 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 282              	.LVL11:
+ 283              		.loc 1 309 5 view .LVU72
+ 284 001c 38B9     		cbnz	r0, .L10
+ 310:Core/Src/main.c ****   {
+ 311:Core/Src/main.c ****     osTimerStart(myTimer01Handle, LED_Data->LED_Period - LED_Data->LED_ActiveTime);
+ 285              		.loc 1 311 5 is_stmt 1 view .LVU73
+ 286              		.loc 1 311 43 is_stmt 0 view .LVU74
+ 287 001e 2189     		ldrh	r1, [r4, #8]
+ 288              		.loc 1 311 66 view .LVU75
+ 289 0020 E388     		ldrh	r3, [r4, #6]
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 12
+
+
+ 290              		.loc 1 311 5 view .LVU76
+ 291 0022 C91A     		subs	r1, r1, r3
+ 292 0024 054B     		ldr	r3, .L13
+ 293 0026 1868     		ldr	r0, [r3]
+ 294 0028 FFF7FEFF 		bl	osTimerStart
+ 295              	.LVL12:
+ 296              	.L9:
+ 312:Core/Src/main.c ****   }
+ 313:Core/Src/main.c ****   else
+ 314:Core/Src/main.c ****   {
+ 315:Core/Src/main.c ****     osTimerStart(myTimer01Handle, LED_Data->LED_ActiveTime);
+ 316:Core/Src/main.c ****   }
+ 317:Core/Src/main.c **** 
+ 318:Core/Src/main.c ****   /* USER CODE END myTimerCallback01 */
+ 319:Core/Src/main.c **** }
+ 297              		.loc 1 319 1 view .LVU77
+ 298 002c 10BD     		pop	{r4, pc}
+ 299              	.LVL13:
+ 300              	.L10:
+ 315:Core/Src/main.c ****   }
+ 301              		.loc 1 315 5 is_stmt 1 view .LVU78
+ 302 002e E188     		ldrh	r1, [r4, #6]
+ 303 0030 024B     		ldr	r3, .L13
+ 304 0032 1868     		ldr	r0, [r3]
+ 305 0034 FFF7FEFF 		bl	osTimerStart
+ 306              	.LVL14:
+ 307              		.loc 1 319 1 is_stmt 0 view .LVU79
+ 308 0038 F8E7     		b	.L9
+ 309              	.L14:
+ 310 003a 00BF     		.align	2
+ 311              	.L13:
+ 312 003c 00000000 		.word	.LANCHOR1
+ 313              		.cfi_endproc
+ 314              	.LFE141:
+ 316              		.section	.text.SystemClock_Config,"ax",%progbits
+ 317              		.align	1
+ 318              		.global	SystemClock_Config
+ 319              		.syntax unified
+ 320              		.thumb
+ 321              		.thumb_func
+ 322              		.fpu fpv4-sp-d16
+ 324              	SystemClock_Config:
+ 325              	.LFB135:
+ 145:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 326              		.loc 1 145 1 is_stmt 1 view -0
+ 327              		.cfi_startproc
+ 328              		@ args = 0, pretend = 0, frame = 80
+ 329              		@ frame_needed = 0, uses_anonymous_args = 0
+ 330 0000 30B5     		push	{r4, r5, lr}
+ 331              	.LCFI7:
+ 332              		.cfi_def_cfa_offset 12
+ 333              		.cfi_offset 4, -12
+ 334              		.cfi_offset 5, -8
+ 335              		.cfi_offset 14, -4
+ 336 0002 95B0     		sub	sp, sp, #84
+ 337              	.LCFI8:
+ 338              		.cfi_def_cfa_offset 96
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 13
+
+
+ 146:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 339              		.loc 1 146 3 view .LVU81
+ 146:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 340              		.loc 1 146 22 is_stmt 0 view .LVU82
+ 341 0004 3022     		movs	r2, #48
+ 342 0006 0021     		movs	r1, #0
+ 343 0008 08A8     		add	r0, sp, #32
+ 344 000a FFF7FEFF 		bl	memset
+ 345              	.LVL15:
+ 147:Core/Src/main.c **** 
+ 346              		.loc 1 147 3 is_stmt 1 view .LVU83
+ 147:Core/Src/main.c **** 
+ 347              		.loc 1 147 22 is_stmt 0 view .LVU84
+ 348 000e 0024     		movs	r4, #0
+ 349 0010 0394     		str	r4, [sp, #12]
+ 350 0012 0494     		str	r4, [sp, #16]
+ 351 0014 0594     		str	r4, [sp, #20]
+ 352 0016 0694     		str	r4, [sp, #24]
+ 353 0018 0794     		str	r4, [sp, #28]
+ 151:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 354              		.loc 1 151 3 is_stmt 1 view .LVU85
+ 355              	.LBB5:
+ 151:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 356              		.loc 1 151 3 view .LVU86
+ 357 001a 0194     		str	r4, [sp, #4]
+ 151:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 358              		.loc 1 151 3 view .LVU87
+ 359 001c 1B4B     		ldr	r3, .L17
+ 360 001e 1A6C     		ldr	r2, [r3, #64]
+ 361 0020 42F08052 		orr	r2, r2, #268435456
+ 362 0024 1A64     		str	r2, [r3, #64]
+ 151:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 363              		.loc 1 151 3 view .LVU88
+ 364 0026 1B6C     		ldr	r3, [r3, #64]
+ 365 0028 03F08053 		and	r3, r3, #268435456
+ 366 002c 0193     		str	r3, [sp, #4]
+ 151:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 367              		.loc 1 151 3 view .LVU89
+ 368 002e 019B     		ldr	r3, [sp, #4]
+ 369              	.LBE5:
+ 151:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 370              		.loc 1 151 3 view .LVU90
+ 152:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 371              		.loc 1 152 3 view .LVU91
+ 372              	.LBB6:
+ 152:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 373              		.loc 1 152 3 view .LVU92
+ 374 0030 0294     		str	r4, [sp, #8]
+ 152:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 375              		.loc 1 152 3 view .LVU93
+ 376 0032 174B     		ldr	r3, .L17+4
+ 377 0034 1A68     		ldr	r2, [r3]
+ 378 0036 42F44042 		orr	r2, r2, #49152
+ 379 003a 1A60     		str	r2, [r3]
+ 152:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 380              		.loc 1 152 3 view .LVU94
+ 381 003c 1B68     		ldr	r3, [r3]
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 14
+
+
+ 382 003e 03F44043 		and	r3, r3, #49152
+ 383 0042 0293     		str	r3, [sp, #8]
+ 152:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 384              		.loc 1 152 3 view .LVU95
+ 385 0044 029B     		ldr	r3, [sp, #8]
+ 386              	.LBE6:
+ 152:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 387              		.loc 1 152 3 view .LVU96
+ 156:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 388              		.loc 1 156 3 view .LVU97
+ 156:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 389              		.loc 1 156 36 is_stmt 0 view .LVU98
+ 390 0046 0123     		movs	r3, #1
+ 391 0048 0893     		str	r3, [sp, #32]
+ 157:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 392              		.loc 1 157 3 is_stmt 1 view .LVU99
+ 157:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 393              		.loc 1 157 30 is_stmt 0 view .LVU100
+ 394 004a 4FF48033 		mov	r3, #65536
+ 395 004e 0993     		str	r3, [sp, #36]
+ 158:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 396              		.loc 1 158 3 is_stmt 1 view .LVU101
+ 158:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 397              		.loc 1 158 34 is_stmt 0 view .LVU102
+ 398 0050 0225     		movs	r5, #2
+ 399 0052 0E95     		str	r5, [sp, #56]
+ 159:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 8;
+ 400              		.loc 1 159 3 is_stmt 1 view .LVU103
+ 159:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 8;
+ 401              		.loc 1 159 35 is_stmt 0 view .LVU104
+ 402 0054 4FF48003 		mov	r3, #4194304
+ 403 0058 0F93     		str	r3, [sp, #60]
+ 160:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 400;
+ 404              		.loc 1 160 3 is_stmt 1 view .LVU105
+ 160:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 400;
+ 405              		.loc 1 160 30 is_stmt 0 view .LVU106
+ 406 005a 0823     		movs	r3, #8
+ 407 005c 1093     		str	r3, [sp, #64]
+ 161:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+ 408              		.loc 1 161 3 is_stmt 1 view .LVU107
+ 161:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+ 409              		.loc 1 161 30 is_stmt 0 view .LVU108
+ 410 005e 4FF4C873 		mov	r3, #400
+ 411 0062 1193     		str	r3, [sp, #68]
+ 162:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 4;
+ 412              		.loc 1 162 3 is_stmt 1 view .LVU109
+ 162:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 4;
+ 413              		.loc 1 162 30 is_stmt 0 view .LVU110
+ 414 0064 0423     		movs	r3, #4
+ 415 0066 1293     		str	r3, [sp, #72]
+ 163:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 416              		.loc 1 163 3 is_stmt 1 view .LVU111
+ 163:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 417              		.loc 1 163 30 is_stmt 0 view .LVU112
+ 418 0068 1393     		str	r3, [sp, #76]
+ 164:Core/Src/main.c ****   {
+ 419              		.loc 1 164 3 is_stmt 1 view .LVU113
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 15
+
+
+ 164:Core/Src/main.c ****   {
+ 420              		.loc 1 164 7 is_stmt 0 view .LVU114
+ 421 006a 08A8     		add	r0, sp, #32
+ 422 006c FFF7FEFF 		bl	HAL_RCC_OscConfig
+ 423              	.LVL16:
+ 170:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 424              		.loc 1 170 3 is_stmt 1 view .LVU115
+ 170:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 425              		.loc 1 170 31 is_stmt 0 view .LVU116
+ 426 0070 0F23     		movs	r3, #15
+ 427 0072 0393     		str	r3, [sp, #12]
+ 172:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 428              		.loc 1 172 3 is_stmt 1 view .LVU117
+ 172:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 429              		.loc 1 172 34 is_stmt 0 view .LVU118
+ 430 0074 0495     		str	r5, [sp, #16]
+ 173:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+ 431              		.loc 1 173 3 is_stmt 1 view .LVU119
+ 173:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+ 432              		.loc 1 173 35 is_stmt 0 view .LVU120
+ 433 0076 0594     		str	r4, [sp, #20]
+ 174:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 434              		.loc 1 174 3 is_stmt 1 view .LVU121
+ 174:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 435              		.loc 1 174 36 is_stmt 0 view .LVU122
+ 436 0078 4FF48053 		mov	r3, #4096
+ 437 007c 0693     		str	r3, [sp, #24]
+ 175:Core/Src/main.c **** 
+ 438              		.loc 1 175 3 is_stmt 1 view .LVU123
+ 175:Core/Src/main.c **** 
+ 439              		.loc 1 175 36 is_stmt 0 view .LVU124
+ 440 007e 0794     		str	r4, [sp, #28]
+ 177:Core/Src/main.c ****   {
+ 441              		.loc 1 177 3 is_stmt 1 view .LVU125
+ 177:Core/Src/main.c ****   {
+ 442              		.loc 1 177 7 is_stmt 0 view .LVU126
+ 443 0080 0321     		movs	r1, #3
+ 444 0082 03A8     		add	r0, sp, #12
+ 445 0084 FFF7FEFF 		bl	HAL_RCC_ClockConfig
+ 446              	.LVL17:
+ 181:Core/Src/main.c **** 
+ 447              		.loc 1 181 1 view .LVU127
+ 448 0088 15B0     		add	sp, sp, #84
+ 449              	.LCFI9:
+ 450              		.cfi_def_cfa_offset 12
+ 451              		@ sp needed
+ 452 008a 30BD     		pop	{r4, r5, pc}
+ 453              	.L18:
+ 454              		.align	2
+ 455              	.L17:
+ 456 008c 00380240 		.word	1073887232
+ 457 0090 00700040 		.word	1073770496
+ 458              		.cfi_endproc
+ 459              	.LFE135:
+ 461              		.section	.text.blink1,"ax",%progbits
+ 462              		.align	1
+ 463              		.global	blink1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 16
+
+
+ 464              		.syntax unified
+ 465              		.thumb
+ 466              		.thumb_func
+ 467              		.fpu fpv4-sp-d16
+ 469              	blink1:
+ 470              	.LVL18:
+ 471              	.LFB138:
+ 256:Core/Src/main.c ****   GPIO->LED_ActiveTime = activeTime * 10;
+ 472              		.loc 1 256 1 is_stmt 1 view -0
+ 473              		.cfi_startproc
+ 474              		@ args = 0, pretend = 0, frame = 0
+ 475              		@ frame_needed = 0, uses_anonymous_args = 0
+ 256:Core/Src/main.c ****   GPIO->LED_ActiveTime = activeTime * 10;
+ 476              		.loc 1 256 1 is_stmt 0 view .LVU129
+ 477 0000 38B5     		push	{r3, r4, r5, lr}
+ 478              	.LCFI10:
+ 479              		.cfi_def_cfa_offset 16
+ 480              		.cfi_offset 3, -16
+ 481              		.cfi_offset 4, -12
+ 482              		.cfi_offset 5, -8
+ 483              		.cfi_offset 14, -4
+ 484 0002 0446     		mov	r4, r0
+ 257:Core/Src/main.c ****   GPIO->LED_Period = Period * 10;
+ 485              		.loc 1 257 3 is_stmt 1 view .LVU130
+ 257:Core/Src/main.c ****   GPIO->LED_Period = Period * 10;
+ 486              		.loc 1 257 24 is_stmt 0 view .LVU131
+ 487 0004 01EB8101 		add	r1, r1, r1, lsl #2
+ 488              	.LVL19:
+ 257:Core/Src/main.c ****   GPIO->LED_Period = Period * 10;
+ 489              		.loc 1 257 24 view .LVU132
+ 490 0008 4900     		lsls	r1, r1, #1
+ 491 000a C180     		strh	r1, [r0, #6]	@ movhi
+ 258:Core/Src/main.c **** 
+ 492              		.loc 1 258 3 is_stmt 1 view .LVU133
+ 258:Core/Src/main.c **** 
+ 493              		.loc 1 258 20 is_stmt 0 view .LVU134
+ 494 000c 02EB8202 		add	r2, r2, r2, lsl #2
+ 495              	.LVL20:
+ 258:Core/Src/main.c **** 
+ 496              		.loc 1 258 20 view .LVU135
+ 497 0010 5200     		lsls	r2, r2, #1
+ 498 0012 0281     		strh	r2, [r0, #8]	@ movhi
+ 260:Core/Src/main.c ****   htim3.Instance->ARR = GPIO->LED_ActiveTime;
+ 499              		.loc 1 260 3 is_stmt 1 view .LVU136
+ 500 0014 0122     		movs	r2, #1
+ 501 0016 8188     		ldrh	r1, [r0, #4]
+ 502 0018 0068     		ldr	r0, [r0]
+ 503              	.LVL21:
+ 260:Core/Src/main.c ****   htim3.Instance->ARR = GPIO->LED_ActiveTime;
+ 504              		.loc 1 260 3 is_stmt 0 view .LVU137
+ 505 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 506              	.LVL22:
+ 261:Core/Src/main.c ****   htim3.Instance->SR &= ~(1UL << 0);    //clear Interrupt flag
+ 507              		.loc 1 261 3 is_stmt 1 view .LVU138
+ 261:Core/Src/main.c ****   htim3.Instance->SR &= ~(1UL << 0);    //clear Interrupt flag
+ 508              		.loc 1 261 8 is_stmt 0 view .LVU139
+ 509 001e 074D     		ldr	r5, .L21
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 17
+
+
+ 510 0020 2B68     		ldr	r3, [r5]
+ 261:Core/Src/main.c ****   htim3.Instance->SR &= ~(1UL << 0);    //clear Interrupt flag
+ 511              		.loc 1 261 29 view .LVU140
+ 512 0022 E288     		ldrh	r2, [r4, #6]
+ 261:Core/Src/main.c ****   htim3.Instance->SR &= ~(1UL << 0);    //clear Interrupt flag
+ 513              		.loc 1 261 23 view .LVU141
+ 514 0024 DA62     		str	r2, [r3, #44]
+ 262:Core/Src/main.c ****   HAL_TIM_Base_Start(&htim3);
+ 515              		.loc 1 262 3 is_stmt 1 view .LVU142
+ 262:Core/Src/main.c ****   HAL_TIM_Base_Start(&htim3);
+ 516              		.loc 1 262 22 is_stmt 0 view .LVU143
+ 517 0026 1A69     		ldr	r2, [r3, #16]
+ 518 0028 22F00102 		bic	r2, r2, #1
+ 519 002c 1A61     		str	r2, [r3, #16]
+ 263:Core/Src/main.c ****   HAL_TIM_Base_Start_IT(&htim3);
+ 520              		.loc 1 263 3 is_stmt 1 view .LVU144
+ 521 002e 2846     		mov	r0, r5
+ 522 0030 FFF7FEFF 		bl	HAL_TIM_Base_Start
+ 523              	.LVL23:
+ 264:Core/Src/main.c **** }
+ 524              		.loc 1 264 3 view .LVU145
+ 525 0034 2846     		mov	r0, r5
+ 526 0036 FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
+ 527              	.LVL24:
+ 265:Core/Src/main.c **** 
+ 528              		.loc 1 265 1 is_stmt 0 view .LVU146
+ 529 003a 38BD     		pop	{r3, r4, r5, pc}
+ 530              	.LVL25:
+ 531              	.L22:
+ 265:Core/Src/main.c **** 
+ 532              		.loc 1 265 1 view .LVU147
+ 533              		.align	2
+ 534              	.L21:
+ 535 003c 00000000 		.word	.LANCHOR0
+ 536              		.cfi_endproc
+ 537              	.LFE138:
+ 539              		.section	.text.main,"ax",%progbits
+ 540              		.align	1
+ 541              		.global	main
+ 542              		.syntax unified
+ 543              		.thumb
+ 544              		.thumb_func
+ 545              		.fpu fpv4-sp-d16
+ 547              	main:
+ 548              	.LFB134:
+  66:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
+ 549              		.loc 1 66 1 is_stmt 1 view -0
+ 550              		.cfi_startproc
+ 551              		@ args = 0, pretend = 0, frame = 0
+ 552              		@ frame_needed = 0, uses_anonymous_args = 0
+ 553 0000 08B5     		push	{r3, lr}
+ 554              	.LCFI11:
+ 555              		.cfi_def_cfa_offset 8
+ 556              		.cfi_offset 3, -8
+ 557              		.cfi_offset 14, -4
+  73:Core/Src/main.c **** 
+ 558              		.loc 1 73 3 view .LVU149
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 18
+
+
+ 559 0002 FFF7FEFF 		bl	HAL_Init
+ 560              	.LVL26:
+  79:Core/Src/main.c **** 
+ 561              		.loc 1 79 3 view .LVU150
+ 562 0006 FFF7FEFF 		bl	SystemClock_Config
+ 563              	.LVL27:
+  85:Core/Src/main.c ****   MX_TIM3_Init();
+ 564              		.loc 1 85 3 view .LVU151
+ 565 000a FFF7FEFF 		bl	MX_GPIO_Init
+ 566              	.LVL28:
+  86:Core/Src/main.c **** 
+ 567              		.loc 1 86 3 view .LVU152
+ 568 000e FFF7FEFF 		bl	MX_TIM3_Init
+ 569              	.LVL29:
+  90:Core/Src/main.c ****   
+ 570              		.loc 1 90 3 view .LVU153
+  92:Core/Src/main.c ****   myLED1->GPIO_pin = GPIO_PIN_13;
+ 571              		.loc 1 92 3 view .LVU154
+  92:Core/Src/main.c ****   myLED1->GPIO_pin = GPIO_PIN_13;
+ 572              		.loc 1 92 21 is_stmt 0 view .LVU155
+ 573 0012 0C48     		ldr	r0, .L25
+ 574 0014 0C4B     		ldr	r3, .L25+4
+ 575 0016 0360     		str	r3, [r0]
+  93:Core/Src/main.c **** 
+ 576              		.loc 1 93 3 is_stmt 1 view .LVU156
+  93:Core/Src/main.c **** 
+ 577              		.loc 1 93 20 is_stmt 0 view .LVU157
+ 578 0018 4FF40053 		mov	r3, #8192
+ 579 001c 8380     		strh	r3, [r0, #4]	@ movhi
+  95:Core/Src/main.c **** 
+ 580              		.loc 1 95 3 is_stmt 1 view .LVU158
+ 581 001e 4FF47A62 		mov	r2, #4000
+ 582 0022 40F6B831 		movw	r1, #3000
+ 583 0026 FFF7FEFF 		bl	blink1
+ 584              	.LVL30:
+ 100:Core/Src/main.c **** 
+ 585              		.loc 1 100 3 view .LVU159
+ 586 002a FFF7FEFF 		bl	osKernelInitialize
+ 587              	.LVL31:
+ 120:Core/Src/main.c **** 
+ 588              		.loc 1 120 3 view .LVU160
+ 120:Core/Src/main.c **** 
+ 589              		.loc 1 120 18 is_stmt 0 view .LVU161
+ 590 002e 074A     		ldr	r2, .L25+8
+ 591 0030 0021     		movs	r1, #0
+ 592 0032 0748     		ldr	r0, .L25+12
+ 593 0034 FFF7FEFF 		bl	osThreadNew
+ 594              	.LVL32:
+ 120:Core/Src/main.c **** 
+ 595              		.loc 1 120 16 view .LVU162
+ 596 0038 064B     		ldr	r3, .L25+16
+ 597 003a 1860     		str	r0, [r3]
+ 129:Core/Src/main.c **** 
+ 598              		.loc 1 129 3 is_stmt 1 view .LVU163
+ 599 003c FFF7FEFF 		bl	osKernelStart
+ 600              	.LVL33:
+ 138:Core/Src/main.c **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 19
+
+
+ 601              		.loc 1 138 1 is_stmt 0 view .LVU164
+ 602 0040 0020     		movs	r0, #0
+ 603 0042 08BD     		pop	{r3, pc}
+ 604              	.L26:
+ 605              		.align	2
+ 606              	.L25:
+ 607 0044 00000000 		.word	.LANCHOR2
+ 608 0048 000C0240 		.word	1073875968
+ 609 004c 00000000 		.word	.LANCHOR3
+ 610 0050 00000000 		.word	StartTask01
+ 611 0054 00000000 		.word	.LANCHOR4
+ 612              		.cfi_endproc
+ 613              	.LFE134:
+ 615              		.section	.text.blink2,"ax",%progbits
+ 616              		.align	1
+ 617              		.global	blink2
+ 618              		.syntax unified
+ 619              		.thumb
+ 620              		.thumb_func
+ 621              		.fpu fpv4-sp-d16
+ 623              	blink2:
+ 624              	.LVL34:
+ 625              	.LFB139:
+ 268:Core/Src/main.c ****   GPIO->LED_ActiveTime = activeTime;
+ 626              		.loc 1 268 1 is_stmt 1 view -0
+ 627              		.cfi_startproc
+ 628              		@ args = 0, pretend = 0, frame = 0
+ 629              		@ frame_needed = 0, uses_anonymous_args = 0
+ 268:Core/Src/main.c ****   GPIO->LED_ActiveTime = activeTime;
+ 630              		.loc 1 268 1 is_stmt 0 view .LVU166
+ 631 0000 70B5     		push	{r4, r5, r6, lr}
+ 632              	.LCFI12:
+ 633              		.cfi_def_cfa_offset 16
+ 634              		.cfi_offset 4, -16
+ 635              		.cfi_offset 5, -12
+ 636              		.cfi_offset 6, -8
+ 637              		.cfi_offset 14, -4
+ 638 0002 0446     		mov	r4, r0
+ 639 0004 0D46     		mov	r5, r1
+ 269:Core/Src/main.c ****   GPIO->LED_Period = Period;
+ 640              		.loc 1 269 3 is_stmt 1 view .LVU167
+ 269:Core/Src/main.c ****   GPIO->LED_Period = Period;
+ 641              		.loc 1 269 24 is_stmt 0 view .LVU168
+ 642 0006 C180     		strh	r1, [r0, #6]	@ movhi
+ 270:Core/Src/main.c **** 
+ 643              		.loc 1 270 3 is_stmt 1 view .LVU169
+ 270:Core/Src/main.c **** 
+ 644              		.loc 1 270 20 is_stmt 0 view .LVU170
+ 645 0008 0281     		strh	r2, [r0, #8]	@ movhi
+ 272:Core/Src/main.c **** 
+ 646              		.loc 1 272 3 is_stmt 1 view .LVU171
+ 272:Core/Src/main.c **** 
+ 647              		.loc 1 272 21 is_stmt 0 view .LVU172
+ 648 000a 094B     		ldr	r3, .L29
+ 649 000c 0246     		mov	r2, r0
+ 650              	.LVL35:
+ 272:Core/Src/main.c **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 20
+
+
+ 651              		.loc 1 272 21 view .LVU173
+ 652 000e 0121     		movs	r1, #1
+ 653              	.LVL36:
+ 272:Core/Src/main.c **** 
+ 654              		.loc 1 272 21 view .LVU174
+ 655 0010 0848     		ldr	r0, .L29+4
+ 656              	.LVL37:
+ 272:Core/Src/main.c **** 
+ 657              		.loc 1 272 21 view .LVU175
+ 658 0012 FFF7FEFF 		bl	osTimerNew
+ 659              	.LVL38:
+ 272:Core/Src/main.c **** 
+ 660              		.loc 1 272 19 view .LVU176
+ 661 0016 084E     		ldr	r6, .L29+8
+ 662 0018 3060     		str	r0, [r6]
+ 274:Core/Src/main.c ****   osTimerStart(myTimer01Handle, activeTime);
+ 663              		.loc 1 274 3 is_stmt 1 view .LVU177
+ 664 001a 0122     		movs	r2, #1
+ 665 001c A188     		ldrh	r1, [r4, #4]
+ 666 001e 2068     		ldr	r0, [r4]
+ 667 0020 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 668              	.LVL39:
+ 275:Core/Src/main.c **** 
+ 669              		.loc 1 275 3 view .LVU178
+ 670 0024 2946     		mov	r1, r5
+ 671 0026 3068     		ldr	r0, [r6]
+ 672 0028 FFF7FEFF 		bl	osTimerStart
+ 673              	.LVL40:
+ 277:Core/Src/main.c **** 
+ 674              		.loc 1 277 1 is_stmt 0 view .LVU179
+ 675 002c 70BD     		pop	{r4, r5, r6, pc}
+ 676              	.LVL41:
+ 677              	.L30:
+ 277:Core/Src/main.c **** 
+ 678              		.loc 1 277 1 view .LVU180
+ 679 002e 00BF     		.align	2
+ 680              	.L29:
+ 681 0030 00000000 		.word	.LANCHOR5
+ 682 0034 00000000 		.word	myTimerCallback01
+ 683 0038 00000000 		.word	.LANCHOR1
+ 684              		.cfi_endproc
+ 685              	.LFE139:
+ 687              		.section	.text.StartTask01,"ax",%progbits
+ 688              		.align	1
+ 689              		.global	StartTask01
+ 690              		.syntax unified
+ 691              		.thumb
+ 692              		.thumb_func
+ 693              		.fpu fpv4-sp-d16
+ 695              	StartTask01:
+ 696              	.LVL42:
+ 697              	.LFB140:
+ 285:Core/Src/main.c ****   /* USER CODE BEGIN 5 */
+ 698              		.loc 1 285 1 is_stmt 1 view -0
+ 699              		.cfi_startproc
+ 700              		@ Volatile: function does not return.
+ 701              		@ args = 0, pretend = 0, frame = 16
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 21
+
+
+ 702              		@ frame_needed = 0, uses_anonymous_args = 0
+ 285:Core/Src/main.c ****   /* USER CODE BEGIN 5 */
+ 703              		.loc 1 285 1 is_stmt 0 view .LVU182
+ 704 0000 00B5     		push	{lr}
+ 705              	.LCFI13:
+ 706              		.cfi_def_cfa_offset 4
+ 707              		.cfi_offset 14, -4
+ 708 0002 85B0     		sub	sp, sp, #20
+ 709              	.LCFI14:
+ 710              		.cfi_def_cfa_offset 24
+ 287:Core/Src/main.c **** 
+ 711              		.loc 1 287 3 is_stmt 1 view .LVU183
+ 289:Core/Src/main.c ****   myLED2.GPIO_pin = GPIO_PIN_15;
+ 712              		.loc 1 289 3 view .LVU184
+ 289:Core/Src/main.c ****   myLED2.GPIO_pin = GPIO_PIN_15;
+ 713              		.loc 1 289 20 is_stmt 0 view .LVU185
+ 714 0004 084B     		ldr	r3, .L34
+ 715 0006 0193     		str	r3, [sp, #4]
+ 290:Core/Src/main.c **** 
+ 716              		.loc 1 290 3 is_stmt 1 view .LVU186
+ 290:Core/Src/main.c **** 
+ 717              		.loc 1 290 19 is_stmt 0 view .LVU187
+ 718 0008 4FF40043 		mov	r3, #32768
+ 719 000c ADF80830 		strh	r3, [sp, #8]	@ movhi
+ 292:Core/Src/main.c **** 
+ 720              		.loc 1 292 3 is_stmt 1 view .LVU188
+ 721 0010 4FF47A62 		mov	r2, #4000
+ 722 0014 4FF47A71 		mov	r1, #1000
+ 723 0018 01A8     		add	r0, sp, #4
+ 724              	.LVL43:
+ 292:Core/Src/main.c **** 
+ 725              		.loc 1 292 3 is_stmt 0 view .LVU189
+ 726 001a FFF7FEFF 		bl	blink2
+ 727              	.LVL44:
+ 728              	.L32:
+ 294:Core/Src/main.c ****   {
+ 729              		.loc 1 294 3 is_stmt 1 discriminator 1 view .LVU190
+ 296:Core/Src/main.c ****   }
+ 730              		.loc 1 296 5 discriminator 1 view .LVU191
+ 731 001e 0120     		movs	r0, #1
+ 732 0020 FFF7FEFF 		bl	osDelay
+ 733              	.LVL45:
+ 294:Core/Src/main.c ****   {
+ 734              		.loc 1 294 8 discriminator 1 view .LVU192
+ 735 0024 FBE7     		b	.L32
+ 736              	.L35:
+ 737 0026 00BF     		.align	2
+ 738              	.L34:
+ 739 0028 000C0240 		.word	1073875968
+ 740              		.cfi_endproc
+ 741              	.LFE140:
+ 743              		.section	.text.HAL_TIM_PeriodElapsedCallback,"ax",%progbits
+ 744              		.align	1
+ 745              		.global	HAL_TIM_PeriodElapsedCallback
+ 746              		.syntax unified
+ 747              		.thumb
+ 748              		.thumb_func
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 22
+
+
+ 749              		.fpu fpv4-sp-d16
+ 751              	HAL_TIM_PeriodElapsedCallback:
+ 752              	.LVL46:
+ 753              	.LFB142:
+ 320:Core/Src/main.c **** 
+ 321:Core/Src/main.c **** /**
+ 322:Core/Src/main.c ****   * @brief  Period elapsed callback in non blocking mode
+ 323:Core/Src/main.c ****   * @note   This function is called  when TIM2 interrupt took place, inside
+ 324:Core/Src/main.c ****   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+ 325:Core/Src/main.c ****   * a global variable "uwTick" used as application time base.
+ 326:Core/Src/main.c ****   * @param  htim : TIM handle
+ 327:Core/Src/main.c ****   * @retval None
+ 328:Core/Src/main.c ****   */
+ 329:Core/Src/main.c **** void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+ 330:Core/Src/main.c **** {
+ 754              		.loc 1 330 1 view -0
+ 755              		.cfi_startproc
+ 756              		@ args = 0, pretend = 0, frame = 0
+ 757              		@ frame_needed = 0, uses_anonymous_args = 0
+ 758              		.loc 1 330 1 is_stmt 0 view .LVU194
+ 759 0000 38B5     		push	{r3, r4, r5, lr}
+ 760              	.LCFI15:
+ 761              		.cfi_def_cfa_offset 16
+ 762              		.cfi_offset 3, -16
+ 763              		.cfi_offset 4, -12
+ 764              		.cfi_offset 5, -8
+ 765              		.cfi_offset 14, -4
+ 766 0002 0446     		mov	r4, r0
+ 331:Core/Src/main.c ****   /* USER CODE BEGIN Callback 0 */
+ 332:Core/Src/main.c ****   if(htim->Instance == TIM3)
+ 767              		.loc 1 332 3 is_stmt 1 view .LVU195
+ 768              		.loc 1 332 10 is_stmt 0 view .LVU196
+ 769 0004 0268     		ldr	r2, [r0]
+ 770              		.loc 1 332 5 view .LVU197
+ 771 0006 114B     		ldr	r3, .L43
+ 772 0008 9A42     		cmp	r2, r3
+ 773 000a 04D0     		beq	.L41
+ 774              	.LVL47:
+ 775              	.L37:
+ 333:Core/Src/main.c ****   {
+ 334:Core/Src/main.c ****     HAL_GPIO_TogglePin(myLED_InitStruct.GPIO_port, myLED_InitStruct.GPIO_pin);
+ 335:Core/Src/main.c ****     if(HAL_GPIO_ReadPin(myLED_InitStruct.GPIO_port, myLED_InitStruct.GPIO_pin) == GPIO_PIN_RESET)
+ 336:Core/Src/main.c ****     {
+ 337:Core/Src/main.c ****       htim3.Instance->ARR = myLED_InitStruct.LED_Period - myLED_InitStruct.LED_ActiveTime;
+ 338:Core/Src/main.c ****     }
+ 339:Core/Src/main.c ****     else
+ 340:Core/Src/main.c ****     {
+ 341:Core/Src/main.c ****       htim3.Instance->ARR = myLED_InitStruct.LED_ActiveTime;
+ 342:Core/Src/main.c ****     }
+ 343:Core/Src/main.c ****   }
+ 344:Core/Src/main.c **** 
+ 345:Core/Src/main.c ****   /* USER CODE END Callback 0 */
+ 346:Core/Src/main.c ****   if (htim->Instance == TIM2)
+ 776              		.loc 1 346 3 is_stmt 1 view .LVU198
+ 777              		.loc 1 346 11 is_stmt 0 view .LVU199
+ 778 000c 2368     		ldr	r3, [r4]
+ 779              		.loc 1 346 6 view .LVU200
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 23
+
+
+ 780 000e B3F1804F 		cmp	r3, #1073741824
+ 781 0012 17D0     		beq	.L42
+ 782              	.L36:
+ 347:Core/Src/main.c ****   {
+ 348:Core/Src/main.c ****     HAL_IncTick();
+ 349:Core/Src/main.c ****   }
+ 350:Core/Src/main.c ****   /* USER CODE BEGIN Callback 1 */
+ 351:Core/Src/main.c ****   /* USER CODE END Callback 1 */
+ 352:Core/Src/main.c **** }
+ 783              		.loc 1 352 1 view .LVU201
+ 784 0014 38BD     		pop	{r3, r4, r5, pc}
+ 785              	.LVL48:
+ 786              	.L41:
+ 334:Core/Src/main.c ****     if(HAL_GPIO_ReadPin(myLED_InitStruct.GPIO_port, myLED_InitStruct.GPIO_pin) == GPIO_PIN_RESET)
+ 787              		.loc 1 334 5 is_stmt 1 view .LVU202
+ 788 0016 0E4D     		ldr	r5, .L43+4
+ 789 0018 A988     		ldrh	r1, [r5, #4]
+ 790 001a 2868     		ldr	r0, [r5]
+ 791              	.LVL49:
+ 334:Core/Src/main.c ****     if(HAL_GPIO_ReadPin(myLED_InitStruct.GPIO_port, myLED_InitStruct.GPIO_pin) == GPIO_PIN_RESET)
+ 792              		.loc 1 334 5 is_stmt 0 view .LVU203
+ 793 001c FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 794              	.LVL50:
+ 335:Core/Src/main.c ****     {
+ 795              		.loc 1 335 5 is_stmt 1 view .LVU204
+ 335:Core/Src/main.c ****     {
+ 796              		.loc 1 335 8 is_stmt 0 view .LVU205
+ 797 0020 A988     		ldrh	r1, [r5, #4]
+ 798 0022 2868     		ldr	r0, [r5]
+ 799 0024 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 800              	.LVL51:
+ 335:Core/Src/main.c ****     {
+ 801              		.loc 1 335 7 view .LVU206
+ 802 0028 30B9     		cbnz	r0, .L38
+ 337:Core/Src/main.c ****     }
+ 803              		.loc 1 337 7 is_stmt 1 view .LVU207
+ 337:Core/Src/main.c ****     }
+ 804              		.loc 1 337 45 is_stmt 0 view .LVU208
+ 805 002a 2B89     		ldrh	r3, [r5, #8]
+ 337:Core/Src/main.c ****     }
+ 806              		.loc 1 337 75 view .LVU209
+ 807 002c E988     		ldrh	r1, [r5, #6]
+ 337:Core/Src/main.c ****     }
+ 808              		.loc 1 337 12 view .LVU210
+ 809 002e 094A     		ldr	r2, .L43+8
+ 810 0030 1268     		ldr	r2, [r2]
+ 337:Core/Src/main.c ****     }
+ 811              		.loc 1 337 57 view .LVU211
+ 812 0032 5B1A     		subs	r3, r3, r1
+ 337:Core/Src/main.c ****     }
+ 813              		.loc 1 337 27 view .LVU212
+ 814 0034 D362     		str	r3, [r2, #44]
+ 815 0036 E9E7     		b	.L37
+ 816              	.L38:
+ 341:Core/Src/main.c ****     }
+ 817              		.loc 1 341 7 is_stmt 1 view .LVU213
+ 341:Core/Src/main.c ****     }
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 24
+
+
+ 818              		.loc 1 341 12 is_stmt 0 view .LVU214
+ 819 0038 064B     		ldr	r3, .L43+8
+ 820 003a 1B68     		ldr	r3, [r3]
+ 341:Core/Src/main.c ****     }
+ 821              		.loc 1 341 45 view .LVU215
+ 822 003c 044A     		ldr	r2, .L43+4
+ 823 003e D288     		ldrh	r2, [r2, #6]
+ 341:Core/Src/main.c ****     }
+ 824              		.loc 1 341 27 view .LVU216
+ 825 0040 DA62     		str	r2, [r3, #44]
+ 826 0042 E3E7     		b	.L37
+ 827              	.L42:
+ 348:Core/Src/main.c ****   }
+ 828              		.loc 1 348 5 is_stmt 1 view .LVU217
+ 829 0044 FFF7FEFF 		bl	HAL_IncTick
+ 830              	.LVL52:
+ 831              		.loc 1 352 1 is_stmt 0 view .LVU218
+ 832 0048 E4E7     		b	.L36
+ 833              	.L44:
+ 834 004a 00BF     		.align	2
+ 835              	.L43:
+ 836 004c 00040040 		.word	1073742848
+ 837 0050 00000000 		.word	.LANCHOR2
+ 838 0054 00000000 		.word	.LANCHOR0
+ 839              		.cfi_endproc
+ 840              	.LFE142:
+ 842              		.section	.text.Error_Handler,"ax",%progbits
+ 843              		.align	1
+ 844              		.global	Error_Handler
+ 845              		.syntax unified
+ 846              		.thumb
+ 847              		.thumb_func
+ 848              		.fpu fpv4-sp-d16
+ 850              	Error_Handler:
+ 851              	.LFB143:
+ 353:Core/Src/main.c **** 
+ 354:Core/Src/main.c **** /**
+ 355:Core/Src/main.c ****   * @brief  This function is executed in case of error occurrence.
+ 356:Core/Src/main.c ****   * @retval None
+ 357:Core/Src/main.c ****   */
+ 358:Core/Src/main.c **** void Error_Handler(void)
+ 359:Core/Src/main.c **** {
+ 852              		.loc 1 359 1 is_stmt 1 view -0
+ 853              		.cfi_startproc
+ 854              		@ args = 0, pretend = 0, frame = 0
+ 855              		@ frame_needed = 0, uses_anonymous_args = 0
+ 856              		@ link register save eliminated.
+ 360:Core/Src/main.c ****   /* USER CODE BEGIN Error_Handler_Debug */
+ 361:Core/Src/main.c ****   /* USER CODE END Error_Handler_Debug */
+ 362:Core/Src/main.c **** }
+ 857              		.loc 1 362 1 view .LVU220
+ 858 0000 7047     		bx	lr
+ 859              		.cfi_endproc
+ 860              	.LFE143:
+ 862              		.global	myLED_InitStruct
+ 863              		.global	myTimer01_attributes
+ 864              		.section	.rodata.str1.4,"aMS",%progbits,1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 25
+
+
+ 865              		.align	2
+ 866              	.LC0:
+ 867 0000 6D795469 		.ascii	"myTimer01\000"
+ 867      6D657230 
+ 867      3100
+ 868              		.global	myTimer01Handle
+ 869              		.global	Task01_attributes
+ 870 000a 0000     		.align	2
+ 871              	.LC1:
+ 872 000c 5461736B 		.ascii	"Task01\000"
+ 872      303100
+ 873              		.global	Task01Handle
+ 874              		.global	htim3
+ 875              		.section	.bss.Task01Handle,"aw",%nobits
+ 876              		.align	2
+ 877              		.set	.LANCHOR4,. + 0
+ 880              	Task01Handle:
+ 881 0000 00000000 		.space	4
+ 882              		.section	.bss.htim3,"aw",%nobits
+ 883              		.align	2
+ 884              		.set	.LANCHOR0,. + 0
+ 887              	htim3:
+ 888 0000 00000000 		.space	64
+ 888      00000000 
+ 888      00000000 
+ 888      00000000 
+ 888      00000000 
+ 889              		.section	.bss.myLED_InitStruct,"aw",%nobits
+ 890              		.align	2
+ 891              		.set	.LANCHOR2,. + 0
+ 894              	myLED_InitStruct:
+ 895 0000 00000000 		.space	12
+ 895      00000000 
+ 895      00000000 
+ 896              		.section	.bss.myTimer01Handle,"aw",%nobits
+ 897              		.align	2
+ 898              		.set	.LANCHOR1,. + 0
+ 901              	myTimer01Handle:
+ 902 0000 00000000 		.space	4
+ 903              		.section	.rodata.Task01_attributes,"a"
+ 904              		.align	2
+ 905              		.set	.LANCHOR3,. + 0
+ 908              	Task01_attributes:
+ 909 0000 0C000000 		.word	.LC1
+ 910 0004 00000000 		.space	16
+ 910      00000000 
+ 910      00000000 
+ 910      00000000 
+ 911 0014 00020000 		.word	512
+ 912 0018 18000000 		.word	24
+ 913 001c 00000000 		.space	8
+ 913      00000000 
+ 914              		.section	.rodata.myTimer01_attributes,"a"
+ 915              		.align	2
+ 916              		.set	.LANCHOR5,. + 0
+ 919              	myTimer01_attributes:
+ 920 0000 00000000 		.word	.LC0
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 26
+
+
+ 921 0004 00000000 		.space	12
+ 921      00000000 
+ 921      00000000 
+ 922              		.text
+ 923              	.Letext0:
+ 924              		.file 2 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2020-q4-major\\arm-none-eabi\\inc
+ 925              		.file 3 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2020-q4-major\\arm-none-eabi\\inc
+ 926              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
+ 927              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 928              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h"
+ 929              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
+ 930              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 931              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 932              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 933              		.file 11 "Core/Inc/main.h"
+ 934              		.file 12 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 935              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 936              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h"
+ 937              		.file 15 "<built-in>"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 27
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:18     .text.MX_GPIO_Init:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:25     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:134    .text.MX_GPIO_Init:00000078 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:140    .text.MX_TIM3_Init:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:146    .text.MX_TIM3_Init:00000000 MX_TIM3_Init
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:237    .text.MX_TIM3_Init:00000058 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:243    .text.myTimerCallback01:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:250    .text.myTimerCallback01:00000000 myTimerCallback01
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:312    .text.myTimerCallback01:0000003c $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:317    .text.SystemClock_Config:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:324    .text.SystemClock_Config:00000000 SystemClock_Config
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:456    .text.SystemClock_Config:0000008c $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:462    .text.blink1:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:469    .text.blink1:00000000 blink1
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:535    .text.blink1:0000003c $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:540    .text.main:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:547    .text.main:00000000 main
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:607    .text.main:00000044 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:695    .text.StartTask01:00000000 StartTask01
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:616    .text.blink2:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:623    .text.blink2:00000000 blink2
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:681    .text.blink2:00000030 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:688    .text.StartTask01:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:739    .text.StartTask01:00000028 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:744    .text.HAL_TIM_PeriodElapsedCallback:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:751    .text.HAL_TIM_PeriodElapsedCallback:00000000 HAL_TIM_PeriodElapsedCallback
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:836    .text.HAL_TIM_PeriodElapsedCallback:0000004c $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:843    .text.Error_Handler:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:850    .text.Error_Handler:00000000 Error_Handler
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:894    .bss.myLED_InitStruct:00000000 myLED_InitStruct
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:919    .rodata.myTimer01_attributes:00000000 myTimer01_attributes
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:865    .rodata.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:901    .bss.myTimer01Handle:00000000 myTimer01Handle
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:908    .rodata.Task01_attributes:00000000 Task01_attributes
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:880    .bss.Task01Handle:00000000 Task01Handle
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:887    .bss.htim3:00000000 htim3
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:876    .bss.Task01Handle:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:883    .bss.htim3:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:890    .bss.myLED_InitStruct:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:897    .bss.myTimer01Handle:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:904    .rodata.Task01_attributes:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s:915    .rodata.myTimer01_attributes:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_GPIO_Init
+HAL_TIM_Base_Init
+HAL_TIM_ConfigClockSource
+HAL_TIMEx_MasterConfigSynchronization
+HAL_TIM_Base_Stop
+HAL_TIM_Base_Stop_IT
+osTimerStop
+HAL_GPIO_TogglePin
+HAL_GPIO_ReadPin
+osTimerStart
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccA3kxxa.s 			page 28
+
+
+memset
+HAL_RCC_OscConfig
+HAL_RCC_ClockConfig
+HAL_TIM_Base_Start
+HAL_TIM_Base_Start_IT
+HAL_Init
+osKernelInitialize
+osThreadNew
+osKernelStart
+osTimerNew
+osDelay
+HAL_IncTick

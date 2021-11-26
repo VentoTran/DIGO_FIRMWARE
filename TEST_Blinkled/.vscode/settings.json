@@ -1,0 +1,19 @@
+{
+    "files.associations": {
+        "main.h": "c",
+        "cmsis_os.h": "c",
+        "freertos.h": "c",
+        "task.h": "c",
+        "stm32f4xx_hal.h": "c",
+        "stm32f4xx_hal_conf.h": "c",
+        "stm32f4xx_hal_tim.h": "c",
+        "stm32f4xx_hal_def.h": "c",
+        "stm32_hal_legacy.h": "c",
+        "stm32f4xx.h": "c",
+        "stm32f411xe.h": "c",
+        "system_stm32f4xx.h": "c",
+        "stm32f4xx_hal_exti.h": "c",
+        "stm32f4xx_hal_tim_ex.h": "c",
+        "typeinfo": "c"
+    }
+}
